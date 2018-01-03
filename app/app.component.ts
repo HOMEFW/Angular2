@@ -4,7 +4,9 @@ import { Component } from "@angular/core";
     selector: 'my-app',
     template: `
         <h1> My angular 2 haha </h1>
-        <button class="btn btn-success">Hi</button>
+
+        <router-outlet></router-outlet>
+
     `
 })
 export class AppComponent {
