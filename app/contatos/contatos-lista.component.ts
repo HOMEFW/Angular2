@@ -15,6 +15,12 @@ export class ContatosListaComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.contatos = this.ContatoService.getContatos();
+        this.ContatoService.getContatoSlowly()
+            .then((contatos: Contato[]) => {
+                this.contatos = contatos;
+            })
+            .catch(err => {
+                console.log(err);
+            });
     }
 }

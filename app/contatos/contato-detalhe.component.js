@@ -7,6 +7,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 const core_1 = require("@angular/core");
 let ContatoDetalheComponent = class ContatoDetalheComponent {
+    ngOnInit() {
+        console.log('on init');
+    }
 };
 ContatoDetalheComponent = __decorate([
     core_1.Component({

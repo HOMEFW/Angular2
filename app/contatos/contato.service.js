@@ -9,7 +9,30 @@ const core_1 = require("@angular/core");
 const contatos_mock_1 = require("./contatos-mock");
 let ContatoService = class ContatoService {
     getContatos() {
-        return contatos_mock_1.CONTATOS;
+        return Promise.resolve(contatos_mock_1.CONTATOS);
+    }
+    getContatoSlowly() {
+        return new Promise((resolve, reject) => {
+            setTimeout(resolve, 3000);
+        })
+            .then(() => {
+            console.log('primeiro then');
+            return 'Angular X';
+        })
+            .then((param) => {
+            console.log('segundo then');
+            console.log(param);
+            return new Promise((resolveA, rejectA) => {
+                setTimeout(() => {
+                    console.log('Promise inside promise  4 sec');
+                    resolveA();
+                }, 4000);
+            });
+        })
+            .then(() => {
+            console.log('terceiro then');
+            return this.getContatos();
+        });
     }
 };
 ContatoService = __decorate([
