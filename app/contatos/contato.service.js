@@ -5,11 +5,56 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 const core_1 = require("@angular/core");
-const contatos_mock_1 = require("./contatos-mock");
+const http_1 = require("@angular/http");
+require("rxjs/add/operator/toPromise");
 let ContatoService = class ContatoService {
-    getContatos() {
-        return Promise.resolve(contatos_mock_1.CONTATOS);
+    constructor(http) {
+        this.http = http;
+        this.apiUrl = "app/contatos";
+        this.headers = new http_1.Headers({ 'Content-Type': 'application/json' });
+    }
+    findAll() {
+        return this.http.get(this.apiUrl).toPromise()
+            .then(response => response.json().data)
+            .catch(this.handlerError);
+    }
+    handlerError(err) {
+        console.log('Eror: ' + err);
+        return Promise.reject(err.message || err);
+    }
+    find(id) {
+        return this.findAll()
+            .then((contatos) => contatos.find((contato) => contato.id === id));
+    }
+    create(contato) {
+        return this.http.post(this.apiUrl, JSON.stringify(contato), { headers: this.headers })
+            .toPromise()
+            .then((response) => response.json().data)
+            .catch(this.handlerError);
+    }
+    ;
+    update(contato) {
+        const url = this.apiUrl + '/' + contato.id;
+        return this.http.put(url, JSON.stringify(contato), { headers: this.headers })
+            .toPromise()
+            .then(() => contato)
+            .catch(this.handlerError);
+    }
+    delete(contato) {
+        const url = this.apiUrl + '/' + contato.id;
+        return this.http.delete(url, { headers: this.headers })
+            .toPromise()
+            .then(() => contato)
+            .catch(this.handlerError);
+    }
+    search(term) {
+        return this.http
+            .get(this.apiUrl + "/?nome=" + term)
+            .map((res) => res.json().data);
     }
     getContatoSlowly() {
         return new Promise((resolve, reject) => {
@@ -31,12 +76,13 @@ let ContatoService = class ContatoService {
         })
             .then(() => {
             console.log('terceiro then');
-            return this.getContatos();
+            return this.findAll();
         });
     }
 };
 ContatoService = __decorate([
-    core_1.Injectable()
+    core_1.Injectable(),
+    __metadata("design:paramtypes", [http_1.Http])
 ], ContatoService);
 exports.ContatoService = ContatoService;
 //# sourceMappingURL=contato.service.js.map
